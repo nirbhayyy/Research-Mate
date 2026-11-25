@@ -77,6 +77,7 @@ chroma.sqlite3
 logs/
 tmp/
 temp/
+data/
 
 # ==============================
 # OS Generated Files
