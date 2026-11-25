@@ -1,0 +1,97 @@
+
+# ==============================
+# Python generated files
+# ==============================
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+build/
+dist/
+wheels/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ==============================
+# Virtual Environments
+# ==============================
+.venv/
+venv/
+env/
+ENV/
+
+# ==============================
+# Environment Variables & Secrets
+# ==============================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ==============================
+# IDE & Editor Files
+# ==============================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ==============================
+# Jupyter Notebook
+# ==============================
+.ipynb_checkpoints/
+
+# ==============================
+# Database Files
+# ==============================
+*.db
+*.sqlite3
+database.db
+
+# ==============================
+# ChromaDB / Vector Database
+# ==============================
+chroma_db/
+chroma_data/
+.chroma/
+chroma.sqlite3
+
+# ==============================
+# ML Models & Weights
+# ==============================
+*.pkl
+*.pickle
+*.joblib
+*.h5
+*.keras
+*.pt
+*.pth
+*.onnx
+
+# ==============================
+# Logs & Temporary Files
+# ==============================
+*.log
+logs/
+tmp/
+temp/
+
+# ==============================
+# OS Generated Files
+# ==============================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ==============================
+# Streamlit
+# ==============================
+.streamlit/secrets.toml
+
+# ==============================
+# Node / Frontend (if applicable)
+# ==============================
+node_modules/
+npm-debug.log*
