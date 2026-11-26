@@ -3,6 +3,11 @@ import chromadb
 import hashlib
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 from langchain_community.retrievers import BM25Retriever
+from sentence_transformers import CrossEncoder
+
+reranker = CrossEncoder(
+    "cross-encoder/ms-marco-MiniLM-L-6-v2"
+)
 
 client=chromadb.PersistentClient(
     path="./chroma_db"
@@ -122,3 +127,23 @@ def RRF(densse_result,sparse_result,k=60):
 
     return ranked_result
 
+
+
+def rerank_documets(query,document,top_k=5):
+    pairs=[
+        (query,doc['page_content']) 
+        for doc in document
+    ]
+
+    scores=reranker.predict(pairs)
+
+    for doc,score in zip(document,scores):
+        doc['rerank_score']=float(score)
+
+    rerank_docs=sorted(
+        document,
+        key=lambda x : x['rerank_score'],
+        reverse=True
+        )
+
+    return rerank_docs[:top_k]
