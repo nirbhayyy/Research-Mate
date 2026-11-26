@@ -1,9 +1,6 @@
 
-from transformers.pipelines.audio_utils import chunk_bytes_iter
-from langchain_text_splitters import sentence_transformers
 import chromadb
 import hashlib
-from langchain_huggingface import HuggingFaceEmbeddings
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 from langchain_community.retrievers import BM25Retriever
 
@@ -69,4 +66,59 @@ def create_bm25_ret(chunks):
 
 def keyword_search(bm25_retiver,query):
     return bm25_retiver.invoke(query)
+
+
+def RRF(densse_result,sparse_result,k=60):
+    fused_result={}
+
+    dense_docs=densse_result['documents'][0]
+    dense_metadata=densse_result['metadatas'][0]
+
+    for rank,(content,metadata) in enumerate (zip(dense_docs,dense_metadata),start=1):
+        chunk_id=(
+            f'{metadata.get('source','')}'
+            f'_{metadata.get('page_number','')}'
+            f'_{content}'
+        )
+
+        if chunk_id not in fused_result:
+            fused_result[chunk_id]={
+                'page_content':content,
+                'metadatas':metadata,
+                'score':0.0,
+                'ranks':{}
+        }
+        fused_result[chunk_id]['score']+=1 /(k+rank)
+        fused_result[chunk_id]['ranks']['dense']=rank
+
+    # for bm25 result
+
+    for rank,doc in enumerate(sparse_result,start=1):
+        content=doc.page_content
+        metadata=doc.metadata
+
+        chunk_id=(
+            f"{metadata.get('source','')}"
+            f"_{metadata.get('page_number','')}"
+            f"_{content}"
+        )
+
+        if chunk_id not in fused_result:
+            fused_result[chunk_id]={
+                'page_content':content,
+                'metadatas':metadata,
+                'score':0.0,
+                'ranks':{}
+            }
+        fused_result[chunk_id]['score']+=1/ (k+rank)
+        fused_result[chunk_id]['ranks']['bm25']=rank
+
+
+    ranked_result=sorted(
+        fused_result.values(),
+        key=lambda x : x['score'],
+        reverse= True
+    )
+
+    return ranked_result
 

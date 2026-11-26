@@ -1,5 +1,6 @@
 from researchmate.ingestion import load_all_papers
-from researchmate.retrieval import create_bm25_ret,sentiment_search,keyword_search, create_vectoreStore
+from researchmate.retrieval import (create_bm25_ret,sentiment_search,keyword_search, create_vectoreStore
+                                        ,RRF)
 chunks=load_all_papers()
 
 print("\n========== FIRST CHUNK ==========")
@@ -12,7 +13,7 @@ vectorstore=create_vectoreStore(chunks)
 
 bm25=create_bm25_ret(chunks)
 
-query='How does RAG reduce hallucinations in LLMs'
+query='what is Generative Artificial Intelligence'
 
 print("\n========== CHROMADB SEARCH ==========")
 
@@ -35,3 +36,15 @@ for doc in spare_result:
     print("\nPaper:", doc.metadata["paper_name"])
     print("Page:", doc.metadata["page_number"])
     print("Content:", doc.page_content[:300])
+
+
+
+hybrid_results=RRF(dense_result,spare_result)
+
+print("\n========== HYBRID SEARCH RESULTS ==========")
+for index, result in enumerate(hybrid_results[:5], start=1):
+    print(f"\nRank: {index}")
+    print(f"Score: {result['score']:.5f}")
+    print(f"Retrieval ranks: {result['ranks']}")
+    print(f"Source: {result['metadatas'].get('source')}")
+    print(f"Content: {result['page_content'][:300]}")
